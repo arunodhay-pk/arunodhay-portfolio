@@ -105,23 +105,19 @@ window.PORTFOLIO = {
   skills: [
     {
       group: "Business Analysis & Agile",
-      items: ["Requirements Gathering", "BRD & FRD", "User Stories", "Acceptance Criteria", "Agile / Scrum", "As-Is / To-Be Process Mapping", "Gap & Root Cause Analysis", "UAT Planning & Execution", "SOP Documentation", "Stakeholder Management"]
+      items: ["Requirements Gathering", "BRD & FRD", "User Stories", "Acceptance Criteria", "Agile / Scrum", "As-Is / To-Be Mapping", "Gap & Root Cause Analysis", "UAT Planning & Execution", "SOP Documentation", "Stakeholder Management"]
     },
     {
-      group: "Generative AI & AI Workflows",
-      items: ["Generative AI", "Gemini", "Claude", "ChatGPT", "OpenAI Codex", "Oracle AI Agent Studio", "Prompt Engineering", "AI-Assisted Documentation"]
+      group: "Generative AI & Automation",
+      items: ["Generative AI", "Gemini", "Claude", "ChatGPT", "OpenAI Codex", "Oracle AI Agent Studio", "Prompt Engineering", "Power Automate", "Excel VBA", "Power Query"]
     },
     {
       group: "Oracle Fusion & Enterprise Systems",
-      items: ["Oracle Fusion Applications", "Configure, Price, Quote (CPQ) Jet", "Fusion Enterprise Contracts (FEC)", "DAS", "Accounts Receivable (AR)", "Oracle Subscription Management (OSM)", "Fusion Order Management (FOM)", "Oracle Service Cloud (OSVC)"]
+      items: ["Oracle Fusion Applications", "Configure, Price, Quote (CPQ)", "FEC", "DAS", "Accounts Receivable (AR)", "OSM", "FOM", "Oracle Service Cloud (OSVC)"]
     },
     {
-      group: "Reporting & Automation",
-      items: ["Oracle Analytics Cloud (OAC)", "Advanced Excel", "Excel VBA", "Power Query", "Power Automate", "QlikView", "SQL (Basic)", "ETL", "Power BI"]
-    },
-    {
-      group: "Tools & Collaboration",
-      items: ["Jira", "Help Desk", "Confluence", "OpenProject", "Draw.io", "Microsoft 365"]
+      group: "Reporting, Analytics & Tools",
+      items: ["Oracle Analytics Cloud (OAC)", "Advanced Excel", "QlikView", "Power BI", "SQL (Basic)", "ETL", "Jira", "Help Desk", "Confluence", "OpenProject", "Draw.io"]
     }
   ],
 
