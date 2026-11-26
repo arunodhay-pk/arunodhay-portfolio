@@ -125,7 +125,7 @@
   // Hidden admin resume updater
   // Opens via 5 taps on #name within 2s, or ?admin=true
   // =====================================================
-  var GEMINI_MODEL = "gemini-2.5-flash";
+  var GEMINI_MODEL = "gemini-3.8-flash";
   var REPO = "arunodhay-pk/arunodhay-portfolio", BRANCH = "main";
   var modal = $("admin-modal"), logEl = $("admin-log"), busy = false;
 
