@@ -173,20 +173,41 @@
       "Keep `resume` exactly \"assets/Arunodhay_PK.pdf\". Keep `filters` and each project's `categories` values consistent with filter keys. " +
       "Do not invent facts that are not in the resume. Return ONLY valid JSON, no markdown, no commentary.\n\nCURRENT DATA:\n" +
       JSON.stringify(window.PORTFOLIO);
-    var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(key), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ inline_data: { mime_type: "application/pdf", data: pdfB64 } }, { text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
-      })
-    });
-    var body = await res.json().catch(function () { return {}; });
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 90000);
+    var res, body;
+    try {
+      res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(key), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          contents: [{ parts: [{ inline_data: { mime_type: "application/pdf", data: pdfB64 } }, { text: prompt }] }],
+          generationConfig: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } }
+        })
+      });
+      body = await res.json().catch(function () { return {}; });
+    } catch (err) {
+      if (err.name === "AbortError") throw new Error("Gemini request timed out after 90 seconds. Try again.");
+      throw new Error("Gemini network error: " + err.message);
+    } finally {
+      clearTimeout(timer);
+    }
     if (!res.ok) throw new Error("Gemini error " + res.status + ": " + ((body.error && body.error.message) || "request failed"));
-    var text = body.candidates && body.candidates[0] && body.candidates[0].content.parts.map(function (p) { return p.text || ""; }).join("");
-    if (!text) throw new Error("Gemini returned no content");
+    var cand = body.candidates && body.candidates[0];
+    if (!cand || !cand.content || !cand.content.parts) {
+      throw new Error("Gemini returned no content" + (cand && cand.finishReason ? " (finishReason: " + cand.finishReason + ")" : ""));
+    }
+    var text = cand.content.parts.filter(function (p) { return !p.thought; })
+      .map(function (p) { return p.text || ""; }).join("");
+    if (!text.trim()) throw new Error("Gemini returned no text after filtering thought parts");
     text = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-    var data = JSON.parse(text);
+    var data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      throw new Error("Could not parse Gemini JSON (" + err.message + "). Response began: " + text.slice(0, 120));
+    }
     var req = ["name", "headline", "subheadline", "email", "phone", "linkedin", "metrics", "filters", "projects", "experience", "skills", "certifications"];
     req.forEach(function (k) { if (data[k] == null) throw new Error("Gemini JSON missing: " + k); });
     data.resume = "assets/Arunodhay_PK.pdf";
