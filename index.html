@@ -24,10 +24,27 @@
   </script>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    #metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    #skills-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    #skills-grid .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    #certs li { display: flex; align-items: center; gap: 14px; }
+    #certs .badge { flex-shrink: 0; }
     .exp-bullets { margin: 8px 0 0 18px; padding: 0; color: var(--muted, #94a3b8); font-size: 0.94rem; line-height: 1.55; }
     .exp-bullets li { margin-bottom: 4px; }
-    .cert-link { display: inline-block; margin-left: 8px; font-size: 0.82rem; font-weight: 600; text-decoration: underline; }
-    .edu-lang-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 16px; }
+    .cert-link { display: inline-block; margin-left: 6px; font-size: 0.82rem; font-weight: 600; text-decoration: underline; }
+    .edu-lang-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 18px; }
+    @media (min-width: 769px) {
+      #menu-toggle { display: none; }
+    }
+    @media (max-width: 820px) {
+      #metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      #skills-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 460px) {
+      #metrics { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -173,31 +190,25 @@
         <div class="card reveal visible">
           <h3>Business Analysis &amp; Agile</h3>
           <ul class="tags">
-            <li>Requirements Gathering</li><li>BRD &amp; FRD</li><li>User Stories</li><li>Acceptance Criteria</li><li>Agile / Scrum</li><li>As-Is / To-Be Process Mapping</li><li>Gap &amp; Root Cause Analysis</li><li>UAT Planning &amp; Execution</li><li>SOP Documentation</li><li>Stakeholder Management</li>
+            <li>Requirements Gathering</li><li>BRD &amp; FRD</li><li>User Stories</li><li>Acceptance Criteria</li><li>Agile / Scrum</li><li>As-Is / To-Be Mapping</li><li>Gap &amp; Root Cause Analysis</li><li>UAT Planning &amp; Execution</li><li>SOP Documentation</li><li>Stakeholder Management</li>
           </ul>
         </div>
         <div class="card reveal visible">
-          <h3>Generative AI &amp; AI Workflows</h3>
+          <h3>Generative AI &amp; Automation</h3>
           <ul class="tags">
-            <li>Generative AI</li><li>Gemini</li><li>Claude</li><li>ChatGPT</li><li>OpenAI Codex</li><li>Oracle AI Agent Studio</li><li>Prompt Engineering</li><li>AI-Assisted Documentation</li>
+            <li>Generative AI</li><li>Gemini</li><li>Claude</li><li>ChatGPT</li><li>OpenAI Codex</li><li>Oracle AI Agent Studio</li><li>Prompt Engineering</li><li>Power Automate</li><li>Excel VBA</li><li>Power Query</li>
           </ul>
         </div>
         <div class="card reveal visible">
           <h3>Oracle Fusion &amp; Enterprise Systems</h3>
           <ul class="tags">
-            <li>Oracle Fusion Applications</li><li>Configure, Price, Quote (CPQ) Jet</li><li>Fusion Enterprise Contracts (FEC)</li><li>DAS</li><li>Accounts Receivable (AR)</li><li>Oracle Subscription Management (OSM)</li><li>Fusion Order Management (FOM)</li><li>Oracle Service Cloud (OSVC)</li>
+            <li>Oracle Fusion Applications</li><li>Configure, Price, Quote (CPQ)</li><li>FEC</li><li>DAS</li><li>Accounts Receivable (AR)</li><li>OSM</li><li>FOM</li><li>Oracle Service Cloud (OSVC)</li>
           </ul>
         </div>
         <div class="card reveal visible">
-          <h3>Reporting &amp; Automation</h3>
+          <h3>Reporting, Analytics &amp; Tools</h3>
           <ul class="tags">
-            <li>Oracle Analytics Cloud (OAC)</li><li>Advanced Excel</li><li>Excel VBA</li><li>Power Query</li><li>Power Automate</li><li>QlikView</li><li>SQL (Basic)</li><li>ETL</li><li>Power BI</li>
-          </ul>
-        </div>
-        <div class="card reveal visible">
-          <h3>Tools &amp; Collaboration</h3>
-          <ul class="tags">
-            <li>Jira</li><li>Help Desk</li><li>Confluence</li><li>OpenProject</li><li>Draw.io</li><li>Microsoft 365</li>
+            <li>Oracle Analytics Cloud (OAC)</li><li>Advanced Excel</li><li>QlikView</li><li>Power BI</li><li>SQL (Basic)</li><li>ETL</li><li>Jira</li><li>Help Desk</li><li>Confluence</li><li>OpenProject</li><li>Draw.io</li>
           </ul>
         </div>
       </div>
