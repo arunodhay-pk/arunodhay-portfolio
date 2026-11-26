@@ -29,7 +29,7 @@
     });
   }
 
-  // ---------- Render from window.PORTFOLIO (callable repeatedly) ----------
+  // ---------- Render from window.PORTFOLIO ----------
   function render() {
     var D = window.PORTFOLIO;
     document.title = D.name + " — " + D.headline.split("|")[0].trim();
@@ -65,9 +65,11 @@
     $("metrics").innerHTML = D.metrics.map(function (m) {
       return '<article class="card metric reveal"><strong>' + esc(m.value) + '</strong><h3>' + esc(m.title) + '</h3><p>' + esc(m.text) + '</p></article>';
     }).join("");
+
     $("filters").innerHTML = D.filters.map(function (f, i) {
       return '<button class="chip' + (i === 0 ? ' active' : '') + '" data-filter="' + esc(f.key) + '">' + esc(f.label) + '</button>';
     }).join("");
+
     $("projects-grid").innerHTML = D.projects.map(function (p) {
       return '<article class="card project reveal" data-category="' + esc((p.categories || []).join(" ")) + '">' +
         '<span class="org">' + esc(p.org) + '</span><h3>' + esc(p.title) + '</h3><dl>' +
@@ -75,16 +77,38 @@
         '<dt>Solution</dt><dd>' + esc(p.solution) + '</dd>' +
         '<dt>Result</dt><dd>' + esc(p.result) + '</dd></dl></article>';
     }).join("");
+
     $("timeline").innerHTML = D.experience.map(function (e) {
-      return '<li class="reveal"><span class="date">' + esc(e.dates) + '</span><h3>' + esc(e.role) + '</h3><p>' + esc(e.company) + ' · ' + esc(e.place) + '</p></li>';
+      var bullets = e.highlights || [];
+      if (bullets.length === 1) {
+        return '<li class="reveal"><span class="date">' + esc(e.dates) + '</span><h3>' + esc(e.role) + '</h3><p>' + esc(e.company) + ' · ' + esc(e.place) + ' — ' + esc(bullets[0]) + '</p></li>';
+      }
+      var listHtml = bullets.length
+        ? '<ul class="exp-bullets">' + bullets.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join("") + '</ul>'
+        : '';
+      return '<li class="reveal"><span class="date">' + esc(e.dates) + '</span><h3>' + esc(e.role) + '</h3><p>' + esc(e.company) + ' · ' + esc(e.place) + '</p>' + listHtml + '</li>';
     }).join("");
+
     $("skills-grid").innerHTML = D.skills.map(function (g) {
       return '<div class="card reveal"><h3>' + esc(g.group) + '</h3><ul class="tags">' +
         g.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join("") + '</ul></div>';
     }).join("");
+
     $("certs").innerHTML = D.certifications.map(function (c) {
-      return '<li class="reveal"><span class="badge">★</span><div>' + esc(c.name) + '<small>' + esc(c.date) + '</small></div></li>';
+      var badgeLink = c.url
+        ? ' · <a class="cert-link" href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer">View Badge ↗</a>'
+        : '';
+      return '<li class="reveal"><span class="badge">★</span><div>' + esc(c.name) + ' <small>' + esc(c.date) + badgeLink + '</small></div></li>';
     }).join("");
+
+    if ($("education-text") && D.education && D.education.length) {
+      var ed = D.education[0];
+      $("education-text").textContent = ed.degree + ", " + ed.institution + ", " + ed.dates + ".";
+    }
+    if ($("languages-text") && D.languages && D.languages.length) {
+      $("languages-text").textContent = D.languages.join(", ");
+    }
+
     $("availability").textContent = "● " + D.availability;
     $("linkedin-btn").href = D.linkedin;
 
@@ -117,7 +141,7 @@
     }
   });
 
-  // ---------- Project filters (delegated, survives re-render) ----------
+  // ---------- Project filters ----------
   $("filters").addEventListener("click", function (e) {
     var chip = e.target.closest(".chip");
     if (!chip) return;
@@ -169,8 +193,7 @@
   });
 
   // =====================================================
-  // Hidden admin resume updater
-  // Opens via 5 taps on #name within 2s, or ?admin=true
+  // Hidden admin resume updater (5 taps on #name)
   // =====================================================
   var GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.8-flash"];
   var REPO = "arunodhay-pk/arunodhay-portfolio", BRANCH = "main";
@@ -213,7 +236,6 @@
     return btoa(bin);
   }
 
-  // ---- PDF.js: extract text in the browser (fast), fall back to raw PDF if unavailable ----
   var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
   var PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
   function loadPdfJs() {
@@ -248,7 +270,7 @@
     var prompt = "You are updating a personal portfolio website's data. Below is the CURRENT data as JSON; it is the exact schema template " +
       "(same keys, same structure, same value types). " + (useText ? "Read the RESUME TEXT below" : "Read the attached resume PDF") +
       " and return the updated JSON, revising sections " +
-      "(headline, subheadline, linkedin, metrics, projects, experience, skills, certifications) to reflect the new resume. " +
+      "(headline, subheadline, linkedin, metrics, projects, experience, skills, certifications, education, languages) to reflect the new resume. " +
       "Keep `resume` exactly \"assets/Arunodhay_PK.pdf\", keep `phone` as \"\", and keep `email_b64` unchanged for anti-spam privacy. " +
       "Keep `filters` and each project's `categories` values consistent with filter keys. " +
       "Do not invent facts that are not in the resume. Return ONLY valid JSON, no markdown, no commentary." +
@@ -373,4 +395,3 @@
     }
   });
 })();
-                                                                                
