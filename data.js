@@ -4,8 +4,8 @@
 window.PORTFOLIO = {
   name: "Arunodhay PK",
   location: "Bengaluru, India · Immediate Joiner",
-  headline: "Business Analyst | Requirements, UAT & Process Automation | Oracle Enterprise Systems",
-  subheadline: "3+ years translating complex stakeholder needs into BRDs, automated reporting, and scalable workflows across Oracle Fusion ERP/CRM and automotive operations. Based in Bengaluru, India (Immediate Joiner).",
+  headline: "Business Analyst | Reporting Automation, Requirements & UAT | Oracle Enterprise Systems",
+  subheadline: "Business Analyst with 3.5+ years turning stakeholder needs into BRDs, automated reporting, and scalable workflows across Oracle Fusion, Oracle Service Cloud, and analytics. Based in Bengaluru (Immediate Joiner).",
   resume: "assets/Arunodhay_PK.pdf",
   email_b64: "YXJ1bm9kaGF5cGtAZ21haWwuY29t",
   phone: "",
@@ -13,67 +13,135 @@ window.PORTFOLIO = {
   availability: "Available Immediately",
 
   metrics: [
-    { value: "98%", title: "Faster Reporting", text: "Cut monthly Service Request dashboard prep from 105 mins to 2 mins." },
-    { value: "300+", title: "Records Corrected", text: "Resolved data quality gaps via OSVC validation rules (out of ~350 flagged)." },
+    { value: "98%", title: "Faster Reporting", text: "Cut monthly Service Request (SR) dashboard prep from 105 mins to 2 mins." },
+    { value: "300+", title: "Records Corrected", text: "Resolved data quality gaps via Oracle Service Cloud (OSVC) validation rules (out of ~350 flagged)." },
     { value: "~99%", title: "Ticket Closure", text: "Tracked & resolved 100 of 101 Jira & Help Desk escalations across order provisioning & integrations." },
-    { value: "30+ Mins", title: "Saved Daily", text: "Automated Service Request, OUDDA/OEDP, and lead assignment workflows." }
+    { value: "30+ Mins", title: "Saved Daily", text: "Automated SR, OUDDA/OEDP, and lead assignment workflows." }
   ],
 
-  /* categories: any of "automation", "data", "enterprise" (or add your own + a filter below) */
   filters: [
     { key: "all", label: "All" },
     { key: "automation", label: "Automation" },
     { key: "data", label: "Data Quality" },
     { key: "enterprise", label: "Enterprise Systems" }
   ],
+
   projects: [
-    { org: "Trigent / Oracle", categories: ["automation", "enterprise"],
+    {
+      org: "Trigent / Oracle",
+      categories: ["automation", "enterprise"],
       title: "End-to-End Service Request & Renewal Reporting Automation",
       problem: "Manual monthly, daily, and partner renewal reporting consumed up to 105 mins per monthly run and 80–90 mins daily.",
       solution: "Gathered user requirements, redesigned dashboards, and built automated Excel VBA & Power Query pipelines with output validation.",
-      result: "Reduced monthly prep to 2 mins (98% reduction, saving ~20 hrs/yr), daily reporting to 4–5 mins, and partner renewal runs from 45 to 5 mins." },
-    { org: "Trigent / Oracle", categories: ["data", "enterprise"],
+      result: "Reduced monthly prep to 2 mins (98% reduction, saving ~20 hrs/yr), daily reporting to 4–5 mins, and partner renewal runs from 45 to 5 mins."
+    },
+    {
+      org: "Trigent / Oracle",
+      categories: ["data", "enterprise"],
       title: "OSVC Data Quality & Missing Entry Governance",
-      problem: "Incomplete entries in Oracle Service Cloud caused downstream routing errors and reporting blind spots.",
-      solution: "Defined validation rules, authored BRDs/SOPs, and instituted a weekly data-quality review routine.",
-      result: "Identified ~350 incomplete records and drove correction of 300+ records." },
-    { org: "Trigent / Oracle", categories: ["automation", "enterprise"],
+      problem: "Incomplete entries in OSVC caused downstream routing errors and reporting blind spots.",
+      solution: "Defined validation rules, authored BRDs/SOPs, and instituted a weekly data-quality review workflow.",
+      result: "Identified ~350 incomplete records and drove correction of 300+ records."
+    },
+    {
+      org: "Trigent / Oracle",
+      categories: ["automation", "enterprise"],
       title: "Automated Queue Routing & ELS Order-Form Workflow",
       problem: "Manual SR assignment, OUDDA/OEDP routing, lead retirement, and ELS order-form data entry caused delays and missed records.",
-      solution: "Documented As-Is/To-Be workflows in BRDs/user stories, ran UAT, and launched 30-minute interval auto-assignment plus on-demand ELS order-form automation using Oracle Fusion AR, OSM, and FOM data.",
-      result: "Saved 30+ mins/day on SR routing, 20–30 mins/day for a 4-user lead team, and streamlined 350+ invoice/order entries." },
-    { org: "Trigent / Oracle", categories: ["automation", "enterprise"],
+      solution: "Documented As-Is/To-Be workflows in BRDs/user stories, ran UAT, and launched 30-minute interval auto-assignment plus on-demand ELS order-form automation using Oracle Fusion Accounts Receivable (AR), Oracle Subscription Management (OSM), and Fusion Order Management (FOM) data.",
+      result: "Saved 30+ mins/day on SR routing, 20–30 mins/day for a 4-user lead team, and streamlined 350+ invoice/order entries."
+    },
+    {
+      org: "Trigent / Oracle",
+      categories: ["automation", "enterprise"],
       title: "AI-Enabled Service Request Transformation Proposal",
       problem: "High manual triage effort across 50+ monthly JAPAC SRs and 100+ APAC lead queries.",
-      solution: "Authored business case, BRD, As-Is/To-Be workflows, and SOPs for an Oracle AI Agent-assisted SR workflow.",
-      result: "Projected 40–60% effort reduction (currently under business evaluation)." },
-    { org: "WyzMindz Solutions", categories: ["automation", "data"],
+      solution: "Authored business case, BRD, As-Is/To-Be process maps, and SOPs for an Oracle AI Agent-assisted SR workflow.",
+      result: "Projected 40–60% effort reduction (currently under business evaluation)."
+    },
+    {
+      org: "WyzMindz Solutions",
+      categories: ["automation", "data"],
       title: "Automotive CRM & Multi-Client KPI Reporting",
-      problem: "Three automotive clients needed unified visibility across 5 CRM workflows and faster monthly business reviews.",
-      solution: "Built 10–16 page MBRs using QlikView, basic SQL, and Excel macros; led functional/regression testing and trained 30+ executives.",
-      result: "Cut macro report prep from 15+ mins to under 1 min and resolved 80% (4/5) of logged release defects pre-delivery." }
+      problem: "Three automotive clients needed unified visibility across 5 CRM workflows and faster Monthly Business Reviews (MBRs).",
+      solution: "Built 10–16 page MBRs using QlikView, SQL, and Excel macros; led functional/regression testing and trained 30+ executives.",
+      result: "Cut macro report prep from 15+ mins to under 1 min and resolved 80% (4/5) of logged release defects pre-delivery."
+    }
   ],
 
   experience: [
-    { role: "Business Analyst", company: "Trigent Software Private Limited (Client: Oracle)", dates: "Nov 2024 – Nov 2026", place: "Bengaluru" },
-    { role: "Business Analyst", company: "WyzMindz Solutions Private Limited", dates: "Apr 2023 – Nov 2024", place: "Bengaluru (Remote)" },
-    { role: "Graduate Engineer Trainee", company: "Tescar Equipment India Private Limited", dates: "Oct 2017 – Apr 2018", place: "Kochi" }
+    {
+      role: "Business Analyst",
+      company: "Trigent Software Private Limited (Client: Oracle)",
+      dates: "Nov 2024 – Nov 2026",
+      place: "Bengaluru",
+      highlights: [
+        "Supported Oracle University service delivery for JAPAC: reporting, data analysis, process management, and stakeholder management.",
+        "Wrote BRDs, user stories, and SOPs for 4 automation initiatives.",
+        "Raised and tracked 101 tickets (77 Help Desk, 24 Jira) with 99% closure."
+      ]
+    },
+    {
+      role: "Business Analyst",
+      company: "WyzMindz Solutions Private Limited",
+      dates: "Apr 2023 – Nov 2024",
+      place: "Bengaluru (Remote)",
+      highlights: [
+        "Led requirements gathering, functional/regression testing, and client training across automotive CRM workflows.",
+        "Automated reporting with Power Query, Excel macros, and QlikView."
+      ]
+    },
+    {
+      role: "Graduate Engineer Trainee",
+      company: "Tescar Equipment India Private Limited",
+      dates: "Oct 2017 – Apr 2018",
+      place: "Kochi",
+      highlights: [
+        "Managed Kerala client service operations, site maintenance, and operator supervision."
+      ]
+    }
   ],
 
   skills: [
-    { group: "Business Analysis & Agile", items: ["Requirements Gathering", "BRD/FRD", "User Stories", "As-Is/To-Be Process Mapping", "Gap & Root Cause Analysis", "UAT Planning & Execution", "SOP Documentation", "Stakeholder Management"] },
-    { group: "Oracle Fusion & Enterprise Systems", items: ["Oracle Fusion Applications", "CPQ Jet", "FEC", "DAS", "Fusion AR", "OSM", "FOM", "OSVC", "Oracle AI Agent Studio"] },
-    { group: "Reporting & Automation", items: ["Oracle Analytics Cloud (OAC)", "Advanced Excel", "Excel VBA", "Power Query", "Power Automate", "QlikView", "SQL (Basic)", "Power BI"] },
-    { group: "Tools", items: ["Jira", "Help Desk", "Confluence", "OpenProject", "Draw.io", "Microsoft 365"] }
+    {
+      group: "Business Analysis & Agile",
+      items: ["Requirements Gathering", "BRD & FRD", "User Stories", "Acceptance Criteria", "Agile / Scrum", "As-Is / To-Be Process Mapping", "Gap & Root Cause Analysis", "UAT Planning & Execution", "SOP Documentation", "Stakeholder Management"]
+    },
+    {
+      group: "Generative AI & AI Workflows",
+      items: ["Generative AI", "Gemini", "Claude", "ChatGPT", "OpenAI Codex", "Oracle AI Agent Studio", "Prompt Engineering", "AI-Assisted Documentation"]
+    },
+    {
+      group: "Oracle Fusion & Enterprise Systems",
+      items: ["Oracle Fusion Applications", "Configure, Price, Quote (CPQ) Jet", "Fusion Enterprise Contracts (FEC)", "DAS", "Accounts Receivable (AR)", "Oracle Subscription Management (OSM)", "Fusion Order Management (FOM)", "Oracle Service Cloud (OSVC)"]
+    },
+    {
+      group: "Reporting & Automation",
+      items: ["Oracle Analytics Cloud (OAC)", "Advanced Excel", "Excel VBA", "Power Query", "Power Automate", "QlikView", "SQL (Basic)", "ETL", "Power BI"]
+    },
+    {
+      group: "Tools & Collaboration",
+      items: ["Jira", "Help Desk", "Confluence", "OpenProject", "Draw.io", "Microsoft 365"]
+    }
   ],
 
   certifications: [
-    { name: "Oracle Fusion AI Agent Studio Certified Developer Professional – Rel 1", date: "Jan 2026" },
-    { name: "Oracle Cloud Infrastructure 2025 Certified AI Foundations Associate", date: "Dec 2025" },
-    { name: "Oracle Fusion AI Agent Studio Certified Foundations Associate – Rel 1", date: "Sep 2025" },
-    { name: "Atlassian Agile Project Management Professional Certificate", date: "Dec 2024" },
-    { name: "Complete Agile Scrum Master Certification", date: "Jun 2024" },
-    { name: "Power BI", date: "Mar 2024" },
-    { name: "SQL/MySQL", date: "Jan 2024" }
-  ]
+    { name: "Oracle Fusion AI Agent Studio Certified Developer Professional – Rel 1", date: "Jan 2026", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" },
+    { name: "Oracle Cloud Infrastructure (OCI) 2025 Certified AI Foundations Associate", date: "Dec 2025 · Valid to Dec 2027", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" },
+    { name: "Oracle Fusion AI Agent Studio Certified Foundations Associate – Rel 1", date: "Sep 2025", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" },
+    { name: "Atlassian Agile Project Management Professional Certificate", date: "Dec 2024", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" },
+    { name: "Complete Agile Scrum Master Certification Training", date: "Jun 2024", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" },
+    { name: "Microsoft Power BI Desktop for Business Intelligence", date: "Mar 2024", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" },
+    { name: "SQL – MySQL for Data Analytics and Business Intelligence", date: "Jan 2024", url: "https://www.linkedin.com/in/arunodhay-pk-14b205144/details/certifications/" }
+  ],
+
+  education: [
+    {
+      degree: "B.E. Mechanical Engineering",
+      institution: "Visvesvaraya Technological University (Coorg Institute of Technology)",
+      dates: "2013 – 2017"
+    }
+  ],
+
+  languages: ["English", "Hindi", "Malayalam"]
 };
