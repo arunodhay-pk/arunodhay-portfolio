@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arunodhay PK — Business Analyst | Oracle Enterprise Systems</title>
+<meta name="description" content="Business Analyst specializing in requirements, UAT and process automation across Oracle Fusion ERP/CRM. Based in Bengaluru, India.">
+<link rel="stylesheet" href="styles.css">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;else if(matchMedia("(prefers-color-scheme: light)").matches)document.documentElement.dataset.theme="light";}catch(e){}</script>
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav container" aria-label="Main">
+    <a href="#home" class="logo">Arunodhay<span>.</span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#projects">Case Studies</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark/light theme">◐</button>
+      <button class="icon-btn menu-btn" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">☰</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section id="home" class="hero container">
+  <p class="eyebrow" id="location"></p>
+  <h1 id="name"></h1>
+  <p class="headline" id="headline"></p>
+  <p class="sub" id="subheadline"></p>
+  <div class="cta">
+    <a class="btn primary" href="#projects">View Impact &amp; Case Studies</a>
+    <a class="btn secondary" id="resume-link" href="assets/Arunodhay_PK.pdf" download>Download Resume</a>
+  </div>
+  <ul class="quick-links" id="quick-links"></ul>
+</section>
+
+<section class="container metrics" id="metrics" aria-label="Key impact metrics"></section>
+
+<section id="projects" class="container section">
+  <h2 class="reveal">Featured Case Studies</h2>
+  <div class="filters reveal" id="filters" role="group" aria-label="Filter case studies"></div>
+  <div class="projects-grid" id="projects-grid"></div>
+</section>
+
+<section id="experience" class="container section">
+  <h2 class="reveal">Experience</h2>
+  <ol class="timeline" id="timeline"></ol>
+</section>
+
+<section id="skills" class="container section">
+  <h2 class="reveal">Skills &amp; Certifications</h2>
+  <div class="skills-grid" id="skills-grid"></div>
+  <h3 class="subhead reveal">Certifications</h3>
+  <ul class="certs" id="certs"></ul>
+</section>
+
+<section id="contact" class="container section contact reveal">
+  <span class="avail" id="availability"></span>
+  <h2>Let's work together</h2>
+  <p>Open to Business Analyst roles in Oracle enterprise systems, requirements and process automation.</p>
+  <div class="cta center">
+    <button class="btn primary" id="copy-email" type="button">Copy Email</button>
+    <a class="btn secondary" id="linkedin-btn" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a class="btn secondary" id="phone-btn"></a>
+  </div>
+  <p class="email-text"><a id="email-link"></a></p>
+  <p id="copy-status" class="sr-status" role="status" aria-live="polite"></p>
+</section>
+</main>
+
+<footer class="footer">
+  <p>© <span id="year">2026</span> <span id="footer-name"></span></p>
+</footer>
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
