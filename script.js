@@ -166,33 +166,73 @@
     return btoa(bin);
   }
 
-  async function callGemini(key, pdfB64) {
+  // ---- PDF.js: extract text in the browser (fast), fall back to raw PDF if unavailable ----
+  var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+  var PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  function loadPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.src = PDFJS_URL;
+      s.onload = function () {
+        if (!window.pdfjsLib) return reject(new Error("pdfjsLib missing after load"));
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+        resolve(window.pdfjsLib);
+      };
+      s.onerror = function () { reject(new Error("Could not load PDF.js")); };
+      document.head.appendChild(s);
+    });
+  }
+  async function extractPdfText(file) {
+    var lib = await loadPdfJs();
+    var pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+    var out = [];
+    for (var i = 1; i <= pdf.numPages; i++) {
+      var content = await (await pdf.getPage(i)).getTextContent();
+      var line = "";
+      content.items.forEach(function (it) { line += it.str + (it.hasEOL ? "\n" : " "); });
+      out.push(line);
+    }
+    return out.join("\n").replace(/[ \t]+\n/g, "\n").trim();
+  }
+
+  async function callGemini(key, pdfB64, resumeText) {
+    var useText = !!resumeText;
     var prompt = "You are updating a personal portfolio website's data. Below is the CURRENT data as JSON; it is the exact schema template " +
-      "(same keys, same structure, same value types). Read the attached resume PDF and return the updated JSON, revising ALL sections " +
+      "(same keys, same structure, same value types). " + (useText ? "Read the RESUME TEXT below" : "Read the attached resume PDF") +
+      " and return the updated JSON, revising ALL sections " +
       "(headline, subheadline, contact details, metrics, projects, experience, skills, certifications) to reflect the new resume. " +
       "Keep `resume` exactly \"assets/Arunodhay_PK.pdf\". Keep `filters` and each project's `categories` values consistent with filter keys. " +
-      "Do not invent facts that are not in the resume. Return ONLY valid JSON, no markdown, no commentary.\n\nCURRENT DATA:\n" +
-      JSON.stringify(window.PORTFOLIO);
-    var ctrl = new AbortController();
-    var timer = setTimeout(function () { ctrl.abort(); }, 90000);
-    var res, body;
-    try {
-      res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(key), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: ctrl.signal,
-        body: JSON.stringify({
-          contents: [{ parts: [{ inline_data: { mime_type: "application/pdf", data: pdfB64 } }, { text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } }
-        })
-      });
-      body = await res.json().catch(function () { return {}; });
-    } catch (err) {
-      if (err.name === "AbortError") throw new Error("Gemini request timed out after 90 seconds. Try again.");
-      throw new Error("Gemini network error: " + err.message);
-    } finally {
-      clearTimeout(timer);
+      "Do not invent facts that are not in the resume. Return ONLY valid JSON, no markdown, no commentary." +
+      (useText ? "\n\nRESUME TEXT:\n" + resumeText : "") +
+      "\n\nCURRENT DATA:\n" + JSON.stringify(window.PORTFOLIO);
+    var parts = useText ? [{ text: prompt }] : [{ inline_data: { mime_type: "application/pdf", data: pdfB64 } }, { text: prompt }];
+
+    async function request(genConfig) {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function () { ctrl.abort(); }, 90000);
+      try {
+        var r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(key), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: ctrl.signal,
+          body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: genConfig })
+        });
+        return { res: r, body: await r.json().catch(function () { return {}; }) };
+      } catch (err) {
+        if (err.name === "AbortError") throw new Error("Gemini request timed out after 90 seconds. Try again.");
+        throw new Error("Gemini network error: " + err.message);
+      } finally {
+        clearTimeout(timer);
+      }
     }
+
+    var r1 = await request({ responseMimeType: "application/json", thinkingConfig: { thinkingLevel: "minimal" } });
+    if (r1.res.status === 400 && /thinkingConfig|thinkingLevel/i.test((r1.body.error && r1.body.error.message) || "")) {
+      log("Model rejected thinking settings; retrying without them...");
+      r1 = await request({ responseMimeType: "application/json" });
+    }
+    var res = r1.res, body = r1.body;
     if (!res.ok) throw new Error("Gemini error " + res.status + ": " + ((body.error && body.error.message) || "request failed"));
     var cand = body.candidates && body.candidates[0];
     if (!cand || !cand.content || !cand.content.parts) {
@@ -242,8 +282,17 @@
     try {
       log("Reading PDF...");
       var pdfB64 = await fileToBase64(file);
+      log("Extracting text from PDF...");
+      var resumeText = "";
+      try {
+        resumeText = await extractPdfText(file);
+        if (resumeText) log("Extracted " + resumeText.length + " characters.");
+        else log("No text found in PDF; falling back to sending the raw PDF.");
+      } catch (err) {
+        log("PDF text extraction failed (" + err.message + "); falling back to sending the raw PDF.");
+      }
       log("Parsing resume with Gemini...");
-      var data = await callGemini(gKey, pdfB64);
+      var data = await callGemini(gKey, pdfB64, resumeText);
       window.PORTFOLIO = data; render();
       log("Page updated locally.");
       log("Updating data.js...");
