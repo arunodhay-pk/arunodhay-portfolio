@@ -9,6 +9,13 @@
     });
   }
   function telHref(p) { return "tel:" + String(p).replace(/[^+\d]/g, ""); }
+  function getEmail() {
+    var D = window.PORTFOLIO;
+    if (D.email_b64) {
+      try { return atob(D.email_b64); } catch (e) {}
+    }
+    return D.email || "";
+  }
 
   // ---------- Scroll reveal ----------
   var io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (entries) {
@@ -31,10 +38,30 @@
     $("headline").textContent = D.headline;
     $("subheadline").textContent = D.subheadline;
     $("resume-link").href = D.resume;
-    $("quick-links").innerHTML =
-      '<li><a href="mailto:' + esc(D.email) + '">✉ ' + esc(D.email) + '</a></li>' +
-      '<li><a href="' + telHref(D.phone) + '">☎ ' + esc(D.phone) + '</a></li>' +
-      '<li><a href="' + esc(D.linkedin) + '" target="_blank" rel="noopener noreferrer">in LinkedIn</a></li>';
+
+    var quickHtml = '<li><a href="' + esc(D.linkedin) + '" target="_blank" rel="noopener noreferrer">in LinkedIn</a></li>';
+    if (D.phone) {
+      quickHtml += '<li><a href="' + telHref(D.phone) + '">☎ ' + esc(D.phone) + '</a></li>';
+    }
+    if (getEmail()) {
+      quickHtml += '<li><a href="#contact" id="hero-email-btn">✉ Reveal Email</a></li>';
+    }
+    $("quick-links").innerHTML = quickHtml;
+
+    var heroEmailBtn = $("hero-email-btn");
+    if (heroEmailBtn) {
+      heroEmailBtn.addEventListener("click", function (e) {
+        var em = getEmail();
+        if (!em) return;
+        if (this.dataset.revealed !== "1") {
+          e.preventDefault();
+          this.textContent = "✉ " + em;
+          this.href = "mailto:" + em;
+          this.dataset.revealed = "1";
+        }
+      });
+    }
+
     $("metrics").innerHTML = D.metrics.map(function (m) {
       return '<article class="card metric reveal"><strong>' + esc(m.value) + '</strong><h3>' + esc(m.title) + '</h3><p>' + esc(m.text) + '</p></article>';
     }).join("");
@@ -60,15 +87,35 @@
     }).join("");
     $("availability").textContent = "● " + D.availability;
     $("linkedin-btn").href = D.linkedin;
-    $("phone-btn").href = telHref(D.phone);
-    $("phone-btn").textContent = D.phone;
-    $("email-link").href = "mailto:" + D.email;
-    $("email-link").textContent = D.email;
+
+    if (D.phone) {
+      $("phone-btn").style.display = "";
+      $("phone-btn").href = telHref(D.phone);
+      $("phone-btn").textContent = D.phone;
+    } else {
+      $("phone-btn").style.display = "none";
+    }
+
+    $("email-link").href = "#contact";
+    $("email-link").textContent = "Reveal Email Address";
+    $("email-link").dataset.revealed = "";
+
     $("footer-name").textContent = D.name;
     $("year").textContent = new Date().getFullYear();
     observeReveals();
   }
   render();
+
+  $("email-link").addEventListener("click", function (e) {
+    var em = getEmail();
+    if (!em) return;
+    if (this.dataset.revealed !== "1") {
+      e.preventDefault();
+      this.textContent = em;
+      this.href = "mailto:" + em;
+      this.dataset.revealed = "1";
+    }
+  });
 
   // ---------- Project filters (delegated, survives re-render) ----------
   $("filters").addEventListener("click", function (e) {
@@ -105,7 +152,7 @@
   // ---------- Copy email ----------
   var status = $("copy-status");
   $("copy-email").addEventListener("click", function () {
-    var email = window.PORTFOLIO.email;
+    var email = getEmail();
     function done(ok) {
       status.textContent = ok ? "Email copied to clipboard!" : "Copy failed — " + email;
       setTimeout(function () { status.textContent = ""; }, 2500);
@@ -125,7 +172,7 @@
   // Hidden admin resume updater
   // Opens via 5 taps on #name within 2s, or ?admin=true
   // =====================================================
-  var GEMINI_MODEL = "gemini-3.1-flash-lite";
+  var GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.8-flash"];
   var REPO = "arunodhay-pk/arunodhay-portfolio", BRANCH = "main";
   var modal = $("admin-modal"), logEl = $("admin-log"), busy = false;
 
@@ -200,19 +247,20 @@
     var useText = !!resumeText;
     var prompt = "You are updating a personal portfolio website's data. Below is the CURRENT data as JSON; it is the exact schema template " +
       "(same keys, same structure, same value types). " + (useText ? "Read the RESUME TEXT below" : "Read the attached resume PDF") +
-      " and return the updated JSON, revising ALL sections " +
-      "(headline, subheadline, contact details, metrics, projects, experience, skills, certifications) to reflect the new resume. " +
-      "Keep `resume` exactly \"assets/Arunodhay_PK.pdf\". Keep `filters` and each project's `categories` values consistent with filter keys. " +
+      " and return the updated JSON, revising sections " +
+      "(headline, subheadline, linkedin, metrics, projects, experience, skills, certifications) to reflect the new resume. " +
+      "Keep `resume` exactly \"assets/Arunodhay_PK.pdf\", keep `phone` as \"\", and keep `email_b64` unchanged for anti-spam privacy. " +
+      "Keep `filters` and each project's `categories` values consistent with filter keys. " +
       "Do not invent facts that are not in the resume. Return ONLY valid JSON, no markdown, no commentary." +
       (useText ? "\n\nRESUME TEXT:\n" + resumeText : "") +
       "\n\nCURRENT DATA:\n" + JSON.stringify(window.PORTFOLIO);
     var parts = useText ? [{ text: prompt }] : [{ inline_data: { mime_type: "application/pdf", data: pdfB64 } }, { text: prompt }];
 
-    async function request(genConfig) {
+    async function request(model, genConfig) {
       var ctrl = new AbortController();
-      var timer = setTimeout(function () { ctrl.abort(); }, 90000);
+      var timer = setTimeout(function () { ctrl.abort(); }, 45000);
       try {
-        var r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(key), {
+        var r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + encodeURIComponent(key), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ctrl.signal,
@@ -220,20 +268,35 @@
         });
         return { res: r, body: await r.json().catch(function () { return {}; }) };
       } catch (err) {
-        if (err.name === "AbortError") throw new Error("Gemini request timed out after 90 seconds. Try again.");
+        if (err.name === "AbortError") return { res: { ok: false, status: 408 }, body: { error: { message: "Timed out after 45s" } } };
         throw new Error("Gemini network error: " + err.message);
       } finally {
         clearTimeout(timer);
       }
     }
 
-    var r1 = await request({ responseMimeType: "application/json", thinkingConfig: { thinkingLevel: "minimal" } });
-    if (r1.res.status === 400 && /thinking[\s_-]*(config|level|budget)/i.test((r1.body.error && r1.body.error.message) || "")) {
-      log("Model rejected thinking settings; retrying without them...");
-      r1 = await request({ responseMimeType: "application/json" });
+    var res, body, lastErr = "";
+    for (var m = 0; m < GEMINI_MODELS.length; m++) {
+      var model = GEMINI_MODELS[m];
+      log("Trying " + model + "...");
+      var r1 = await request(model, { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } });
+      if (r1.res.status === 400 && /thinking[\s_-]*(config|level|budget)/i.test((r1.body.error && r1.body.error.message) || "")) {
+        r1 = await request(model, { responseMimeType: "application/json", thinkingConfig: { thinkingLevel: "minimal" } });
+      }
+      if (r1.res.status === 400 && /thinking[\s_-]*(config|level|budget)/i.test((r1.body.error && r1.body.error.message) || "")) {
+        r1 = await request(model, { responseMimeType: "application/json" });
+      }
+      res = r1.res; body = r1.body;
+      if (res.ok) break;
+      lastErr = "Gemini error " + res.status + " (" + model + "): " + ((body.error && body.error.message) || "request failed");
+      if (res.status === 503 || res.status === 429 || res.status === 404 || res.status === 408) {
+        log(model + " unavailable (" + res.status + "), trying next...");
+        continue;
+      }
+      throw new Error(lastErr);
     }
-    var res = r1.res, body = r1.body;
-    if (!res.ok) throw new Error("Gemini error " + res.status + ": " + ((body.error && body.error.message) || "request failed"));
+    if (!res || !res.ok) throw new Error(lastErr || "All Gemini models failed.");
+
     var cand = body.candidates && body.candidates[0];
     if (!cand || !cand.content || !cand.content.parts) {
       throw new Error("Gemini returned no content" + (cand && cand.finishReason ? " (finishReason: " + cand.finishReason + ")" : ""));
@@ -248,9 +311,12 @@
     } catch (err) {
       throw new Error("Could not parse Gemini JSON (" + err.message + "). Response began: " + text.slice(0, 120));
     }
-    var req = ["name", "headline", "subheadline", "email", "phone", "linkedin", "metrics", "filters", "projects", "experience", "skills", "certifications"];
+    var req = ["name", "headline", "subheadline", "linkedin", "metrics", "filters", "projects", "experience", "skills", "certifications"];
     req.forEach(function (k) { if (data[k] == null) throw new Error("Gemini JSON missing: " + k); });
     data.resume = "assets/Arunodhay_PK.pdf";
+    data.phone = "";
+    data.email_b64 = window.PORTFOLIO.email_b64 || "";
+    delete data.email;
     return data;
   }
 
@@ -307,3 +373,4 @@
     }
   });
 })();
+        
