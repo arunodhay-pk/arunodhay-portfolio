@@ -228,7 +228,7 @@
     }
 
     var r1 = await request({ responseMimeType: "application/json", thinkingConfig: { thinkingLevel: "minimal" } });
-    if (r1.res.status === 400 && /thinkingConfig|thinkingLevel/i.test((r1.body.error && r1.body.error.message) || "")) {
+    if (r1.res.status === 400 && /thinking[\s_-]*(config|level|budget)/i.test((r1.body.error && r1.body.error.message) || "")) {
       log("Model rejected thinking settings; retrying without them...");
       r1 = await request({ responseMimeType: "application/json" });
     }
