@@ -75,6 +75,17 @@
 <footer class="footer">
   <p>© <span id="year">2026</span> <span id="footer-name"></span></p>
 </footer>
+<div id="admin-modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="admin-title">
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="admin-close" aria-label="Close">✕</button>
+    <h2 id="admin-title">Resume Updater</h2>
+    <label>Gemini API Key<input type="password" id="admin-gemini" autocomplete="off"></label>
+    <label>GitHub Fine-Grained Token<input type="password" id="admin-github" autocomplete="off"></label>
+    <label>New resume (.pdf)<input type="file" id="admin-file" accept=".pdf,application/pdf"></label>
+    <button type="button" class="btn primary" id="admin-publish">Parse &amp; Publish Live</button>
+    <pre id="admin-log" class="admin-log" aria-live="polite"></pre>
+  </div>
+</div>
 <script src="data.js"></script>
 <script src="script.js"></script>
 </body>
